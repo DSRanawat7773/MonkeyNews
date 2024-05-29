@@ -1,12 +1,11 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 
-export class Navbar extends Component {
 
-  render() {
+const Navbar = ()=> {
     return (
       <div>
-        <nav className="navbar navbar-expand-lg bg-body-tertiary bg-dark">
+        <nav  className="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
           <div className="container-fluid">
             <Link className="navbar-brand" to="/">
               NewsMonkey
@@ -38,6 +37,5 @@ export class Navbar extends Component {
       </div>
     );
   }
-}
 
 export default Navbar;
