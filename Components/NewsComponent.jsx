@@ -12,12 +12,12 @@ const NewsComponent = ({ country = 'in', pageSize = 8, category = 'general', set
 
   const updateNews = async () => {
     setProgress(10);
-    const url = `https://newsapi.org/v2/top-headlines?country=${country}&category=${category}&apiKey=efd43181d6d14d05a137b1eec02876b7&page=${page}&pageSize=${pageSize}`;
+    const url = `https://newsapi.org/v2/top-headlines?&category=${category}&apiKey=788ea66ddc4346d5af22ae3f73e41c98&page=${page}&pageSize=${pageSize}`;
     setLoading(true);
     try {
-      let data = await fetch(url);
+      const data = await fetch(url);
       setProgress(30);
-      let parsedData = await data.json();
+      const parsedData = await data.json();
       setProgress(70);
       setArticles(parsedData.articles);
       setTotalResults(parsedData.totalResults);
@@ -35,22 +35,25 @@ const NewsComponent = ({ country = 'in', pageSize = 8, category = 'general', set
   }, []);
 
   const fetchMoreData = async () => {
-    const url = `https://newsapi.org/v2/top-headlines?country=${country}&category=${category}&apiKey=efd43181d6d14d05a137b1eec02876b7&page=${page+1}&pageSize=${pageSize}`;
-    setPage(page+1);  
-    let data = await fetch(url);
-    let parsedData = await data.json();
-    setArticles(articles.concat(parsedData.articles));
-    setTotalResults(parsedData.totalResults);
+    const url = `https://newsapi.org/v2/top-headlines?&category=${category}&apiKey=788ea66ddc4346d5af22ae3f73e41c98&page=${page + 1}&pageSize=${pageSize}`;
+    setPage(page + 1);
+    try {
+      const data = await fetch(url);
+      const parsedData = await data.json();
+      setArticles(articles.concat(parsedData.articles));
+    } catch (error) {
+      console.error("Error fetching additional news articles:", error);
+    }
   };
 
   return (
     <div className="container my-3">
-      <h1 className="text-center" style={{margin: '81px 13px 40px 16px'}}>MonkeyNews - Top Headlines</h1>
+      <h1 className="text-center" style={{ margin: '81px 13px 40px 16px' }}>MonkeyNews - Top Headlines</h1>
       {loading && <Spinner />}
       <InfiniteScroll
         dataLength={articles.length}
         next={fetchMoreData}
-        hasMore={articles.length !== totalResults}
+        hasMore={articles.length < totalResults}
         loader={<Spinner />}
       >
         <div className="row my-3 mx-3">
@@ -59,7 +62,7 @@ const NewsComponent = ({ country = 'in', pageSize = 8, category = 'general', set
               <NewsItem
                 title={element.title ? element.title.slice(0, 45) : ""}
                 description={element.description ? element.description.slice(0, 88) : ""}
-                imageUrl={element.urlToImage ? element.urlToImage : "https://i.ytimg.com/vi/lWM8rWVh9H0/maxresdefault.jpg"}
+                imageUrl={element.urlToImage || "https://i.ytimg.com/vi/lWM8rWVh9H0/maxresdefault.jpg"}
                 newsUrl={element.url}
                 author={element.author}
                 date={element.publishedAt}
